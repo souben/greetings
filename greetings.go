@@ -1,33 +1,45 @@
 package greetings
 
-/* to collect related functions. */
-
 import (
-	"errors"
-	"fmt"
+    "errors"
+    "fmt"
+    "math/rand"
+    "time"
 )
 
-/* In Go, a function whose name starts with a capital letter can
-be called by a function NOT in the same package.
-This is known in Go as an exported name.
-*/
+// Hello returns a greeting for the named person.
+func Hello(names []string) ( map[string]string, error) {
+    // If no name was given, return an error with a message.
+    messages := make(map[string]string)
 
-func Hello(name string) (string, error) {
+    for _, name := range names {
+   	if name == "" {
+		return nil, errors.New("empty name")
+    	}
+    	// Create a message using a random format.
+   	message := fmt.Sprintf(randomFormat(), name)
+    	messages[name] = message
+    }
 
-	/* In Go, the := operator is a shortcut for declaring and initializing
-	 a variable in one line
+    return messages, nil
 
-	 	var message string
-		message = fmt.Sprintf("Hi, %v. Welcome!", name)
+}
+	// init sets initial values for variables used in the function.
+func init() {
+    rand.Seed(time.Now().UnixNano())
+}
 
-	 Use the fmt package's Sprintf function to create a greeting message.
-	 The first argument is a format string, and Sprintf substitutes
-	 the name parameter's value for the %v format verb.
-	 Inserting the value of the name parameter completes the greeting text.
-	*/
-	if name == "" {
-		return "", errors.New("empty name")
-	}
-	message := fmt.Sprintf("Hi, %v. Welcome", name)
-	return message, nil
+// randomFormat returns one of a set of greeting messages. The returned
+// message is selected at random.
+func randomFormat() string {
+    // A slice of message formats.
+    formats := []string{
+        "Hi, %v. Welcome!",
+        "Great to see you, %v!",
+        "Hail, %v! Well met!",
+    }
+
+    // Return a randomly selected message format by specifying
+    // a random index for the slice of formats.
+    return formats[rand.Intn(len(formats))]
 }
